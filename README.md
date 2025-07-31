@@ -2,9 +2,9 @@
 
 A beautiful, modern web application that explores Reddit data using the Reddit API. Built with vanilla HTML, CSS, and JavaScript, this application provides an intuitive interface for browsing posts, subreddits, users, and searching across Reddit content.
 
-## 🌟 Features
+## Features
 
-### 📱 Posts Section
+### Posts Section
 - **Hot Posts**: View trending posts from all subreddits
 - **Top Posts**: Browse top posts with time filters (day, week, month, year, all time)
 - **New Posts**: Discover the latest posts
@@ -12,83 +12,70 @@ A beautiful, modern web application that explores Reddit data using the Reddit A
 - **Real-time Search**: Filter posts by keywords
 - **Post Details**: Click any post to view full content and comments
 
-### 🏷️ Subreddits Section
+### Subreddits Section
 - **Popular Subreddits**: Browse trending communities
 - **New Subreddits**: Discover recently created communities
 - **Top Subreddits**: View highest-rated communities
 - **Subreddit Search**: Find specific communities
 - **Community Stats**: View member counts and activity
 
-### 🔍 Search Section
+### Search Section
 - **Global Search**: Search across posts, subreddits, and users
 - **Type-specific Results**: Filter search by content type
 - **Real-time Results**: Instant search with debounced input
 
-### 👤 Users Section
+### Users Section
 - **User Profiles**: View detailed user information
 - **Karma Breakdown**: See post and comment karma
 - **User Posts**: Browse posts by specific users
 - **Member Since**: View account creation date
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 - **Node.js** (version 14 or higher) - [Download here](https://nodejs.org/)
 - **npm** (comes with Node.js)
 - A modern web browser (Chrome, Firefox, Safari, Edge)
 
-### Installation
-
-**Option 1: Automated Setup (Recommended)**
-```bash
-# On macOS/Linux
-chmod +x setup.sh
-./setup.sh
-
-**Option 2: Manual Setup**
-```bash
-# Install dependencies
-npm install
-
-# Start the application
-npm start
-```
-
 ### Running Locally
 
 After installation, start the application:
 
 ```bash
+# Install dependencies
+cd redinsight && npm i
 # Start the server
 npm start
-
-# Or for development with auto-restart
-npm run dev
 ```
 
 Then visit: **http://localhost:3000**
 
 The application includes a backend proxy server that handles CORS issues and provides a secure way to access the Reddit API.
 
-### 🐳 Docker Deployment
+### Docker Deployment & Load Balancing
 
-**Option 1: Simple Docker Build**
+**Option 1: Simple Docker Pull and Run (Recommended)**
+[Repo link: https://hub.docker.com/repositories/emacslad](https://hub.docker.com/repositories/emacslad)
 ```bash
-# Build the Docker image
-docker build -t redinsight .
+# Pull the Docker images
+docker pull emacslad/redinsight-web-01:latest
+docker pull emacslad/redinsight-web-02:latest
+docker pull emacslad/redinsight-lb-01:latest
 
-# Run the container
-docker run -d -p 3000:3000 -p 2222:22 --name redinsight-app redinsight
+# Run the containers
+docker run -d -p 8080:3000 -p 2210:22 --name web-01 emacslad/redinsight-web-01
+docker run -d -p 8081:3000 -p 2211:22 --name web-02 emacslad/redinsight-web-02
+docker run -d -p 8082:3000 -p 2212:22 --name lb-01 emacslad/redinsight-lb-01
 
 # Access the application
-# Web: http://localhost:3000
+# Web: http://localhost:8082
 # SSH: ssh ubuntu@localhost -p 2222 (password: pass123)
 ```
 
-**Option 2: Docker Compose (Recommended)**
+**Option 2: Docker Compose (Build locally)**
 ```bash
 # Start all services
-docker-compose up -d
+docker-compose up -d --build
 
 # View logs
 docker-compose logs -f
@@ -97,16 +84,49 @@ docker-compose logs -f
 docker-compose down
 ```
 
-**Option 3: Production with Nginx**
-```bash
-# Start with nginx reverse proxy
-docker-compose --profile production up -d
+### Nginx & Haproxy Setup
 
-# Access via nginx on port 80
-# http://localhost
+#### Nginx
+I used echo with the redirection '>' to add the Nginx config within the Dockerfile responsible for setting up web-01 and web-02 containers
+```
+# Configure nginx
+RUN echo 'server {\n\
+    listen 80;\n\
+    location / {\n\
+        proxy_pass http://localhost:3000;\n\
+        proxy_set_header Host $host;\n\
+        proxy_set_header X-Real-IP $remote_addr;\n\
+    }\n\
+}' > /etc/nginx/sites-available/default
 ```
 
-## 🛠️ Technical Architecture
+#### Haproxy
+I created a different Dockerfile for the loadbalancer as seen in the lb directory. I had used a heredoc(EOF) to add the config to haproxy.cfg within the Dockerfile
+```
+global
+    maxconn 256
+    log stdout format raw local0 info
+
+defaults
+    mode http
+    timeout connect 5s
+    timeout client  50s
+    timeout server  50s
+    option forwardfor
+    option http-server-close
+
+frontend http-in
+    bind *:80
+    default_backend servers
+    http-response add-header X-Served-By %[srv_name]
+
+backend servers
+    balance roundrobin
+    server web01 172.20.0.11:3000 check
+    server web02 172.20.0.12:3000 check
+```
+
+##  Technical Architecture
 
 ### Frontend Technologies
 - **HTML5**: Semantic markup and structure
@@ -133,7 +153,7 @@ docker-compose --profile production up -d
 - **Accessibility**: Keyboard navigation and screen reader support
 - **Performance**: Optimized loading and efficient data handling
 
-## 📊 API Endpoints Used
+## API Endpoints Used
 
 ### Posts
 - `GET /hot.json` - Hot posts
@@ -154,7 +174,7 @@ docker-compose --profile production up -d
 - `GET /user/{username}/about.json` - User profile
 - `GET /user/{username}/submitted.json` - User posts
 
-## 🎨 UI/UX Features
+## UI/UX Features
 
 ### Visual Design
 - **Gradient Backgrounds**: Beautiful color transitions
@@ -174,17 +194,10 @@ docker-compose --profile production up -d
 - **Search Suggestions**: Real-time search results
 - **Filter Controls**: Easy data filtering and sorting
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
-This application uses the public Reddit API, so no API keys are required. However, if you want to add authentication later, you can create a `.env` file:
-
-```env
-# Optional: For authenticated requests
-REDDIT_CLIENT_ID=your_client_id
-REDDIT_CLIENT_SECRET=your_client_secret
-REDDIT_USER_AGENT=RedInsight/1.0
-```
+This application uses the public Reddit API, so no API keys are required. 
 
 ### Customization
 You can customize the application by modifying:
@@ -194,15 +207,15 @@ You can customize the application by modifying:
 - **UI Elements**: Modify HTML structure and CSS classes
 - **Features**: Add new functionality in `script.js`
 
-## 📱 Browser Support
+## Browser Support
 
-- ✅ Chrome 80+
-- ✅ Firefox 75+
-- ✅ Safari 13+
-- ✅ Edge 80+
-- ⚠️ Internet Explorer (not supported)
+- Chrome 80+
+- Firefox 75+
+- Safari 13+
+- Edge 80+
+- Internet Explorer (not supported)
 
-## 🚨 Rate Limiting & Best Practices
+## Rate Limiting & Best Practices
 
 ### API Usage
 - **Respectful Requests**: Built-in delays and proper headers
@@ -216,7 +229,7 @@ You can customize the application by modifying:
 - **Input Validation**: Sanitized user inputs
 - **XSS Prevention**: Safe HTML rendering
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
