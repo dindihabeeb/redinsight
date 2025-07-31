@@ -69,7 +69,7 @@ docker run -d -p 8082:3000 -p 2212:22 --name lb-01 emacslad/redinsight-lb-01
 
 # Access the application
 # Web: http://localhost:8082
-# SSH: ssh ubuntu@localhost -p 2222 (password: pass123)
+# SSH: ssh ubuntu@localhost -p 2212 (password: pass123)
 ```
 
 **Option 2: Docker Compose (Build locally)**
