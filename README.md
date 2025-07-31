@@ -248,3 +248,5 @@ You can customize the application by modifying:
 - Check CSS file loading
 - Verify Font Awesome CDN access
 
+## Credis
+This project will not exist without the Reddit team. A huge thanks to Reddit for producing such a robust and useful API reference.
