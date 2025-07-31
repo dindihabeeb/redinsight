@@ -55,7 +55,7 @@ The application includes a backend proxy server that handles CORS issues and pro
 ### Docker Deployment & Load Balancing
 
 **Option 1: Simple Docker Pull and Run (Recommended)**
-[Repo link: https://hub.docker.com/repositories/emacslad](https://hub.docker.com/repositories/emacslad)
+[Repo link: https://hub.docker.com/repositories/emacslad](https://hub.docker.com/u/emacslad)
 ```bash
 # Pull the Docker images
 docker pull emacslad/redinsight-web-01:latest
