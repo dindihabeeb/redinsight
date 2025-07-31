@@ -33,26 +33,77 @@ A beautiful, modern web application that explores Reddit data using the Reddit A
 ## 🚀 Getting Started
 
 ### Prerequisites
+- **Node.js** (version 14 or higher) - [Download here](https://nodejs.org/)
+- **npm** (comes with Node.js)
 - A modern web browser (Chrome, Firefox, Safari, Edge)
-- No additional software installation required
 
 ### Installation
-1. Clone or download this repository
-2. Open `index.html` in your web browser
-3. Start exploring Reddit data!
+
+**Option 1: Automated Setup (Recommended)**
+```bash
+# On macOS/Linux
+chmod +x setup.sh
+./setup.sh
+
+**Option 2: Manual Setup**
+```bash
+# Install dependencies
+npm install
+
+# Start the application
+npm start
+```
 
 ### Running Locally
+
+After installation, start the application:
+
 ```bash
-# Option 1: Direct file opening
-open index.html
+# Start the server
+npm start
 
-# Option 2: Using a local server (recommended)
-python -m http.server 8000
-# Then visit http://localhost:8000
+# Or for development with auto-restart
+npm run dev
+```
 
-# Option 3: Using Node.js
-npx serve .
-# Then visit the provided URL
+Then visit: **http://localhost:3000**
+
+The application includes a backend proxy server that handles CORS issues and provides a secure way to access the Reddit API.
+
+### 🐳 Docker Deployment
+
+**Option 1: Simple Docker Build**
+```bash
+# Build the Docker image
+docker build -t redinsight .
+
+# Run the container
+docker run -d -p 3000:3000 -p 2222:22 --name redinsight-app redinsight
+
+# Access the application
+# Web: http://localhost:3000
+# SSH: ssh ubuntu@localhost -p 2222 (password: pass123)
+```
+
+**Option 2: Docker Compose (Recommended)**
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+**Option 3: Production with Nginx**
+```bash
+# Start with nginx reverse proxy
+docker-compose --profile production up -d
+
+# Access via nginx on port 80
+# http://localhost
 ```
 
 ## 🛠️ Technical Architecture
@@ -64,10 +115,16 @@ npx serve .
 - **Font Awesome**: Icons for enhanced UI
 - **Google Fonts**: Inter font family for typography
 
+### Backend Technologies
+- **Node.js**: Server-side JavaScript runtime
+- **Express.js**: Web application framework
+- **CORS**: Cross-origin resource sharing handling
+- **node-fetch**: HTTP client for API requests
+
 ### API Integration
-- **Reddit JSON API**: Public API endpoints
-- **CORS Handling**: Proper headers and error handling
-- **Rate Limiting**: Respectful API usage
+- **Reddit JSON API**: Public API endpoints via proxy
+- **CORS Handling**: Backend proxy eliminates CORS issues
+- **Rate Limiting**: Respectful API usage with proper headers
 - **Error Management**: Graceful error handling and user feedback
 
 ### Design Principles

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedInsight - Reddit Data Explorer</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fab fa-reddit-alien"></i>
+                    <h1>RedInsight</h1>
+                </div>
+                <p class="subtitle">Explore Basic Reddit data</p>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-section="posts">
+                    <i class="fas fa-list"></i>
+                    Posts
+                </button>
+                <button class="nav-tab" data-section="subreddits">
+                    <i class="fas fa-hashtag"></i>
+                    Subreddits
+                </button>
+                <button class="nav-tab" data-section="search">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+                <button class="nav-tab" data-section="users">
+                    <i class="fas fa-user"></i>
+                    Users
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Posts Section -->
+            <section id="posts" class="content-section active">
+                <div class="section-header">
+                    <h2>Reddit Posts</h2>
+                    <div class="controls">
+                        <select id="posts-filter" class="filter-select">
+                            <option value="hot">Hot Posts</option>
+                            <option value="top">Top Posts</option>
+                            <option value="new">New Posts</option>
+                            <option value="rising">Rising Posts</option>
+                        </select>
+                        <select id="posts-time" class="filter-select">
+                            <option value="day">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                            <option value="year">This Year</option>
+                            <option value="all">All Time</option>
+                        </select>
+                        <input type="text" id="posts-search" class="search-input" placeholder="Search posts...">
+                    </div>
+                </div>
+                <div id="posts-container" class="posts-grid">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading posts...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Subreddits Section -->
+            <section id="subreddits" class="content-section">
+                <div class="section-header">
+                    <h2>Subreddits</h2>
+                    <div class="controls">
+                        <select id="subreddits-filter" class="filter-select">
+                            <option value="popular">Popular</option>
+                            <option value="new">New</option>
+                            <option value="top">Top</option>
+                        </select>
+                        <input type="text" id="subreddits-search" class="search-input" placeholder="Search subreddits...">
+                    </div>
+                </div>
+                <div id="subreddits-container" class="subreddits-grid">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading subreddits...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Search Section -->
+            <section id="search" class="content-section">
+                <div class="section-header">
+                    <h2>Search Reddit</h2>
+                    <div class="search-controls">
+                        <div class="search-input-group">
+                            <input type="text" id="global-search" class="search-input large" placeholder="Search for posts, subreddits, or users...">
+                            <button id="search-btn" class="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <select id="search-type" class="filter-select">
+                            <option value="posts">Posts</option>
+                            <option value="subreddits">Subreddits</option>
+                            <option value="users">Users</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="search-results" class="search-results">
+                    <div class="search-placeholder">
+                        <i class="fas fa-search"></i>
+                        <p>Enter your search query above to get started</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section id="users" class="content-section">
+                <div class="section-header">
+                    <h2>User Profiles</h2>
+                    <div class="controls">
+                        <input type="text" id="username-input" class="search-input" placeholder="Enter username...">
+                        <button id="get-user-btn" class="btn btn-primary">Get User Data</button>
+                    </div>
+                </div>
+                <div id="user-container" class="user-profile">
+                    <div class="search-placeholder">
+                        <i class="fas fa-user"></i>
+                        <p>Enter a username to view their profile and posts</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2025 RedInsight. Built using Reddit API</p>
+        </footer>
+    </div>
+
+    <!-- Modal for Post Details -->
+    <div id="post-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
