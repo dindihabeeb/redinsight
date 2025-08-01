@@ -126,6 +126,8 @@ backend servers
     server web02 172.20.0.12:3000 check
 ```
 
+<img width="1678" height="1035" alt="Image" src="https://github.com/user-attachments/assets/c05a9f8f-dd76-498e-bf57-87f75c38f2a2" />
+
 ##  Technical Architecture
 
 ### Frontend Technologies
